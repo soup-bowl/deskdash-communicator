@@ -1,0 +1,6 @@
+# Python bits.
+.pytest_cache/
+__pycache__/
+pythonenv/
+communicator/config.json
+netmem.json
