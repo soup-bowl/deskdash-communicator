@@ -49,8 +49,12 @@ class Stats(object):
 		if which('nvidia-smi') is None:
 			return {'available': False}
 		
-		command  = ['nvidia-smi', '-q', '-x']
-		response = subprocess.check_output(command)
+		try:
+			command  = ['nvidia-smi', '-q', '-x']
+			response = subprocess.check_output(command)
+		except subprocess.CalledProcessError:
+			return {'available': False}
+		
 		gpu      = xml.etree.ElementTree.fromstring(response).find("gpu")
 
 		gpu_name = gpu.find("product_name").text
