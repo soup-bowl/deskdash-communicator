@@ -3,8 +3,12 @@ import socket
 import json
 import os
 import time
+import tempfile
 
 class Network(object):
+	def __init__(self):
+		self.cache = os.path.join( tempfile.gettempdir(), 'deskdash-netmem.json' )
+
 	"""Sends an nmap request around the network and collates information about everything that responds.
 	"""
 	def get_all(self):
@@ -13,18 +17,17 @@ class Network(object):
 		Returns:
 			dict: 4th octave IP address value as key, and their associated collected data.
 		"""
-		conf  = 'netmem.json'
 
-		if os.path.isfile(conf):
-			if time.time() > (os.path.getmtime(conf) + 300 ):
-				os.remove(conf)
+		if os.path.isfile( self.cache ):
+			if time.time() > (os.path.getmtime( self.cache ) + 300 ):
+				os.remove( self.cache )
 			else:
-				with open(conf) as f:
+				with open( self.cache ) as f:
 					hosts = json.load(f)
 					return hosts
 
 		hosts = self.net_scan_all()
-		with open(conf, 'w') as f:
+		with open(self.cache, 'w') as f:
 			json.dump(hosts, f)
 
 		return hosts
