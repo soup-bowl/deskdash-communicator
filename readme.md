@@ -1,5 +1,5 @@
 # Desktop Dashboard - Communicator API
-Cross-platform low requirement Python API to report system information and current stats across the network. Currently, this can:
+Cross-platform low requirement Python API to report system information and current stats across the network for the [Deskdash Project][dd]. Currently, this can:
 
 * Collect and return system information.
 * Report system usage and (sometimes) temperatures.
@@ -13,3 +13,5 @@ Start off by running `dev.sh`, which will install dependencies for the Python AP
 
 * For testing, run `py.test`.
 * Run `python -m communicator` to run the API server, accessible via http://localhost:43594.
+
+[dd]: https://github.com/soup-bowl/deskdash
