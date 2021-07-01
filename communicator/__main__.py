@@ -7,6 +7,9 @@ from communicator.network import Network
 import json
 import time
 import sys, os
+import contextlib
+import daemon
+from daemon import pidfile
 
 hostname = "0.0.0.0"
 port     = 43594
@@ -91,13 +94,39 @@ class Server(BaseHTTPRequestHandler):
 		self.wfile.write(bytes(json.dumps(respo), "utf-8"))
 
 if __name__ == "__main__":
+	# Has the user requested this to start as a daemon?
+	daemon_mode  = False
+	daemon_state = 0
+	for i in range(1, len(sys.argv)):
+		if '--daemon' == sys.argv[i] or '-d' == sys.argv[i]:
+			try:
+				if sys.argv[(i + 1)] == 'start':
+					daemon_mode  = True
+					daemon_state = 0
+				if sys.argv[(i + 1)] == 'stop':
+					daemon_mode  = True
+					daemon_state = 1
+			except IndexError:
+				pass
+
 	http_server = HTTPServer((hostname, port), Server)
-	print("Server started http://%s:%s" % (hostname, port))
 
-	try:
-		http_server.serve_forever()
-	except KeyboardInterrupt:
-		pass
+	if (daemon_mode):
+		print("Deskdash Communicator - Daemon Mode (port %s)." % (port))
+		daemon_context = daemon.DaemonContext(
+			umask=0o002,
+			files_preserve=[http_server.fileno()]
+		)
 
-	http_server.server_close()
-	print("Server stopped.")
+		with daemon_context:
+			http_server.serve_forever()
+	else:
+		print("Deskdash Communicator - Server started on port %s (ctrl-c to close)." % (port))
+
+		try:
+			http_server.serve_forever()
+		except KeyboardInterrupt:
+			pass
+
+		http_server.server_close()
+		print("Server stopped.")
