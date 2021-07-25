@@ -97,11 +97,23 @@ if __name__ == "__main__":
 	# Has the user requested this to start as a daemon?
 	daemon_mode  = False
 	daemon_state = 0
+	repo_url     = "https://github.com/soup-bowl/deskdash-communicator"
 	for i in range(1, len(sys.argv)):
 		if '--version' == sys.argv[i] or '-v' == sys.argv[i]:
 			print("Deskdash Communicator API - Version 0.3-alpha.")
 			print("This version is licensed under MIT.")
-			print("https://github.com/soup-bowl/deskdash-communicator")
+			print("<%s>" % repo_url)
+			exit(0)
+		elif '--help' == sys.argv[i] or '-h' == sys.argv[i]:
+			print("Usage: command [-v|--version] [-h|--help] [-d|--daemon]")
+			print("Opens up a JSON API of system information.")
+			print("With no arguments, a temporary runner is opened in the current TTY, available until you cancel (ctrl-c) the command, or the TTY terminates.")
+			print("")
+			print("-v, --version   Prints the version number.")
+			print("-h, --help      Shows this help information.")
+			print("-d, --daemon    Runs the server as a daemon, continues after the TTY terminates.")
+			print("")
+			print("For more information, see the main repository at: <%s>" % repo_url)
 			exit(0)
 		elif '--daemon' == sys.argv[i] or '-d' == sys.argv[i]:
 			try:
