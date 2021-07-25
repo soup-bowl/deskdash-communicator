@@ -98,7 +98,12 @@ if __name__ == "__main__":
 	daemon_mode  = False
 	daemon_state = 0
 	for i in range(1, len(sys.argv)):
-		if '--daemon' == sys.argv[i] or '-d' == sys.argv[i]:
+		if '--version' == sys.argv[i] or '-v' == sys.argv[i]:
+			print("Deskdash Communicator API - Version 0.3-alpha.")
+			print("This version is licensed under MIT.")
+			print("https://github.com/soup-bowl/deskdash-communicator")
+			exit(0)
+		elif '--daemon' == sys.argv[i] or '-d' == sys.argv[i]:
 			try:
 				if sys.argv[(i + 1)] == 'start':
 					daemon_mode  = True
