@@ -1,5 +1,12 @@
 {
 	"auth": false,
 	"key": "anyacceptablecharacterswilldo",
-	"permitShutdown": false
+	"permitCommands": true,
+	"permitNetscan": false,
+	"commands": {
+		"shutdown": {
+			"function": "dd-shutdown",
+			"fa-icon": "fa-power-off"
+		}
+	}
 }

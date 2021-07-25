@@ -27,7 +27,7 @@ class Server(BaseHTTPRequestHandler):
 		currentdir = os.path.split(os.path.abspath(__file__))[0]
 		use_key  = False
 		key      = ''
-		a_shdwn  = False
+		use_func = False
 		use_scan = False
 		try:
 			with open(currentdir + "/config.json") as json_file:
@@ -35,22 +35,31 @@ class Server(BaseHTTPRequestHandler):
 
 				use_key  = data['auth'] if 'auth' in data else False
 				key      = data['key'] if 'key' in data else ''
-				a_shdwn  = data['permitShutdown'] if 'permitShutdown' in data else False
+				use_func = data['permitCommands'] if 'permitCommands' in data else False
 				use_scan = data['permitNetscan'] if 'permitNetscan' in data else False
 
 		except FileNotFoundError:
 			pass
 
 		if use_key == False or ( use_key == True and ( input_key != None and input_key[0] == key ) ):
+			# A key was provided and accepted, or password authentication is diabled.	
 			if use_scan == True and input_net != None:
+				# If network scan is enabled and requested, respond with network instead.
 				all_devices = Network().get_all()
 				self.fire_response(200, {
 					'success': True,
 					'content': all_devices
 				})
-			elif ( a_shdwn == True and input_cmd != None and input_cmd[0] != None ):
+			elif ( use_func == True and input_cmd != None and input_cmd[0] == "ls" ):
+				# Command to list commands was issued.
+				self.fire_response(200, {
+					'success': True,
+					'content': Actions( data ).list_actions()
+				})
+			elif ( use_func == True and input_cmd != None and input_cmd[0] != None ):
+				# Command was issued.
 				try:
-					Actions(input_cmd[0])
+					Actions( data ).run( input_cmd[0] )
 
 					self.fire_response(200, {
 						'success': True,
@@ -61,6 +70,7 @@ class Server(BaseHTTPRequestHandler):
 						'message': 'Incorrect command recieved.'
 					})
 			else:
+				# No fancy stuff? Send the stat result, as per.
 				self.fire_response(200, {
 					'success': True,
 					'content': Stats().get()
