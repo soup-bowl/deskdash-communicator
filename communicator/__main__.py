@@ -8,8 +8,9 @@ import json
 import time
 import sys, os
 import contextlib
-import daemon
-from daemon import pidfile
+if sys.platform.startswith('linux'):
+	import daemon
+	from daemon import pidfile
 
 hostname = "0.0.0.0"
 port     = 43594
@@ -139,6 +140,10 @@ if __name__ == "__main__":
 	http_server = HTTPServer((hostname, port), Server)
 
 	if (daemon_mode):
+		if not sys.platform.startswith('linux'):
+			print("Daemon mode only supports Linux for now.")
+			exit(1)
+
 		print("Deskdash Communicator - Daemon Mode (port %s)." % (port))
 		daemon_context = daemon.DaemonContext(
 			umask=0o002,
