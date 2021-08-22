@@ -6,7 +6,7 @@
 	"commands": {
 		"shutdown": {
 			"function": "dd-shutdown",
-			"fa-icon": "fa-power-off"
+			"bi-icon": "bi-power"
 		}
 	}
 }
