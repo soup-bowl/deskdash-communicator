@@ -22,6 +22,14 @@ class Actions(object):
 			act = self.data["commands"][action]
 			if (act["function"] == 'dd-shutdown'):
 				self.shutdown()
+			elif (act["function"] == 'dd-reboot'):
+				self.reboot()
+			elif (act["function"] == 'dd-volup'):
+				self.volume_control("up")
+			elif (act["function"] == 'dd-voldwn'):
+				self.volume_control("down")
+			elif (act["function"] == 'dd-volmute'):
+				self.volume_control("mute")
 			else:
 				cmd = act["function"].split()
 				subprocess.call(cmd)
@@ -42,3 +50,30 @@ class Actions(object):
 			subprocess.call(["shutdown", "/s", "/t", "10"])
 		else:
 			subprocess.call(["shutdown", "-h", "-t", "10"])
+
+	def reboot(self):
+		"""Reboots the API host.
+		"""
+		if ( platform.system() == "Windows" ):
+			subprocess.call(["shutdown", "/r", "/t", "10"])
+		else:
+			subprocess.call(["shutdown", "-r", "-t", "10"])
+
+	def volume_control(self, act):
+		"""Controls the audio output on the host system.
+
+		Args:
+			action (string): Desired command (from 'up', 'down' and 'mute').
+		"""
+		if ( act == "up" ):
+			if ( platform.system() != "Windows" ):
+				subprocess.call(["amixer", "-D", "pulse", "sset", "Master", "5%+"])
+		elif ( act == "down" ):
+			if ( platform.system() != "Windows" ):
+				subprocess.call(["amixer", "-D", "pulse", "sset", "Master", "5%-"])
+		elif ( act == "mute" ):
+			if ( platform.system() != "Windows" ):
+				subprocess.call(["amixer", "-D", "pulse", "sset", "Master", "0%"])
+		else:
+			return
+
